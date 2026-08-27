@@ -74,18 +74,6 @@ public class CustomerController {
     }
 
 
-    @PatchMapping("/{customerId}/kyc")
-    @PreAuthorize("hasRole('ADMIN')")
-    public CustomerResponseDto updateKycStatus(
-            @PathVariable Long customerId,
-            @RequestParam KycStatus status) {
-
-        return customerService.updateKycStatus(
-                customerId,
-                status
-        );
-    }
-
     @PostMapping("/{customerId}/kyc")
     @PreAuthorize("hasRole('CUSTOMER')")
     public KycResponseDto submitKyc(
