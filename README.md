@@ -1,443 +1,540 @@
-# 🏦 FinBank
+<div align="center">
 
-### Secure Banking Management System with an AI-Powered Financial Assistant
+🏦 FinBank
 
-FinBank is a secure backend banking management system built with **Java and Spring Boot**. It provides customer authentication, account management, financial transaction processing, transaction history and filtering, role-based authorization, and an **AI-powered financial assistant** using Spring AI and Google Gemini.
+Digital Banking • Secure APIs • AI-Powered Financial Assistant
 
-The application follows a layered architecture with clear separation between controllers, services, repositories, entities, DTOs, security, exception handling, and AI components.
+A full-stack digital banking platform built with Spring Boot, React, TypeScript, MySQL, JWT Security, and Spring AI + Google Gemini.
 
----
+<p>
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21"/>
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot"/>
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-6-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/MySQL-8+-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
+</p>
 
-## 🚀 Highlights
+<p>
+  <img src="https://img.shields.io/badge/Spring%20Security-JWT-6DB33F?style=flat-square&logo=springsecurity&logoColor=white" alt="Spring Security"/>
+  <img src="https://img.shields.io/badge/Spring%20AI-2.0.1-6DB33F?style=flat-square&logo=spring&logoColor=white" alt="Spring AI"/>
+  <img src="https://img.shields.io/badge/Gemini-AI-4285F4?style=flat-square&logo=google&logoColor=white" alt="Gemini"/>
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite"/>
+</p>
 
-| Feature | Status |
-|---|:---:|
-| 🔐 JWT Authentication | ✅ |
-| 👥 Customer Management | ✅ |
-| 🏦 Account Management | ✅ |
-| 💰 Deposits & Withdrawals | ✅ |
-| 🔄 Account Transfers | ✅ |
-| 📊 Transaction History & Filtering | ✅ |
-| 🛡️ Role-Based Authorization | ✅ |
-| 🔒 Customer Data Isolation | ✅ |
-| 🤖 AI Financial Assistant | ✅ |
-| 🧠 Persistent AI Conversation Memory | ✅ |
-| 🧪 Automated Test Suite | ✅ |
-| 🌐 Frontend | 🚧 Next Phase |
+</div>
 
----
+✨ Overview
 
-# 📋 Table of Contents
+FinBank is a full-stack digital banking application designed to demonstrate how a modern banking platform can be built with a secure Java backend and a responsive React frontend.
 
-- [Features](#-features)
-- [AI Financial Assistant](#-ai-powered-financial-assistant)
-- [Security Architecture](#-security-architecture)
-- [API Overview](#-api-overview)
-- [Technology Stack](#-technology-stack)
-- [Project Architecture](#-project-architecture)
-- [Project Structure](#-project-structure)
-- [Testing](#-testing)
-- [Getting Started](#-getting-started)
-- [Configuration](#-configuration)
-- [Example API Usage](#-example-api-usage)
-- [Design Principles](#-design-principles)
-- [Backend Status](#-backend-status)
-- [Future Improvements](#-future-improvements)
+It goes beyond basic CRUD operations by implementing:
 
----
+🔐 JWT-based authentication and role-based authorization
 
-# ✨ Features
+👤 Customer and profile management
 
-## 🔐 Authentication & Authorization
+💳 Multiple banking accounts
 
-- Customer registration using email and password
-- Customer login
-- JWT-based stateless authentication
-- BCrypt password hashing
-- Role-based authorization
-- `CUSTOMER` and `ADMIN` roles
-- Protected customer and administrative endpoints
-- Custom JWT authentication filter
-- Centralized authentication and authorization error handling
-- Customer ownership verification
-- Prevention of cross-customer data access
+💰 Deposits and withdrawals
 
----
+🔄 Account-to-account transfers
 
-## 👤 Customer Management
+📊 Transaction history with filtering and pagination
 
-- Customer registration
-- Automatic user creation during registration
-- BCrypt password encryption
-- Email normalization
-- Duplicate email validation
-- Customer profile retrieval
-- Authenticated customer profile retrieval
-- Customer profile updates
-- Paginated customer listing
-- Customer ownership validation
+🪪 KYC workflow and status management
 
----
+🤖 AI-powered financial assistant
 
-## 🏦 Account Management
+🧠 Persistent AI conversation memory
 
-- Create bank accounts for customers
-- Unique FinBank account number generation
-- `FIN`-prefixed account numbers
-- Multiple account types
-- Multiple currencies
-- Account status management
-- Customer-specific account retrieval
-- Paginated account listing
-- Account ownership enforcement
-- Protection against creating accounts for another customer
+🛡️ Customer-level data isolation
 
----
+🧪 Unit, security, controller, AI, and integration testing
 
-# 💳 Financial Transactions
+Project status: ✅ Core customer banking and AI assistant functionality is working.
 
-FinBank supports the core banking operations required to manage customer funds.
+🎯 What FinBank Demonstrates
 
-### 💵 Deposits
+This project was built to showcase practical full-stack engineering rather than simply connecting a frontend to a database.
 
-- Deposit money into an account
-- Account ownership verification
-- Active-account validation
-- Balance updates
-- Transaction creation
-- Unique transaction references
-- Transaction status tracking
-- Transaction timestamps
+Area
 
-### 💸 Withdrawals
+Implementation
 
-- Withdraw money from an account
-- Account ownership verification
-- Active-account validation
-- Insufficient balance validation
-- Balance updates
-- Transaction creation
-- Unique transaction references
+Backend
 
-### 🔄 Transfers
+Spring Boot REST APIs
 
-- Transfer funds between FinBank accounts
-- Source account ownership verification
-- Destination account validation
-- Active-account validation
-- Insufficient balance validation
-- Same-account transfer prevention
-- Atomic balance updates
-- Transaction creation
-- Unique transaction references
+Frontend
 
-Financial transaction operations use database transactions and pessimistic account locking to provide safer concurrent balance updates.
+React + TypeScript + Vite
 
----
+Database
 
-# 📊 Transaction History & Filtering
+MySQL
 
-FinBank provides customer-specific transaction history with pagination, sorting, and filtering.
+Authentication
 
-### Supported Filters
+JWT
 
-- Transaction type
-- From date
-- To date
-- Minimum amount
-- Maximum amount
-- Description search
-- Transaction reference search
-- Pagination
-- Sorting
+Authorization
 
-### Validation
+Spring Security + roles
 
-The API validates transaction filter ranges:
+ORM
 
-```text
-fromDate <= toDate
-minAmount <= maxAmount
-minAmount >= 0
-maxAmount >= 0
+Spring Data JPA / Hibernate
 
-Customers can only retrieve transactions associated with accounts they own.
+Validation
 
-🤖 AI-Powered Financial Assistant
+Jakarta Bean Validation
 
-FinBank includes an AI-powered financial assistant built using:
+AI
 
-Spring AI
-Google Gemini
-Spring AI Tool Calling
-JDBC-backed Chat Memory
+Spring AI + Google Gemini
 
-The assistant provides customers with a conversational interface for understanding their financial information.
+AI Memory
 
-Important: The AI assistant is intentionally read-only. It cannot perform deposits, withdrawals, transfers, or other financial mutations.
+JDBC-backed Spring AI chat memory
 
-🧠 AI Capabilities
+API Client
 
-The assistant can:
+Axios
 
-Retrieve customer accounts
-Retrieve account balances
-Retrieve account information
-Retrieve recent transactions
-Retrieve individual transactions
-Explain transaction activity
-Answer general financial education questions
-Perform calculations using retrieved financial data
-Maintain conversational context across requests
-🛠️ AI Tool Calling
+Routing
 
-The AI assistant retrieves application data through controlled backend tools rather than having direct database access.
+React Router
 
-Tool	Purpose
-getMyAccounts	Retrieve authenticated customer's accounts
-getMyRecentTransactions	Retrieve recent transactions
-getMyAccount	Retrieve a specific owned account
-getMyTransaction	Retrieve a specific owned transaction
+Testing
 
-The tools derive the customer identity from the authenticated security context.
+JUnit + Mockito + Spring Boot tests
 
-The client cannot provide an arbitrary customer ID to access another customer's financial information.
+Build
 
-🔒 AI Security
+Maven + npm
 
-The AI subsystem implements multiple security controls:
+🚀 Features
 
-Authentication required
-Customer-only access
-Customer identity derived from Spring Security
-Account ownership verification
-Transaction ownership verification
-No unrestricted database access for the LLM
-No client-supplied customer IDs
-Recent transaction limit capped between 1 and 50
-Customer-scoped conversation IDs
-Cross-customer conversation isolation
-Read-only financial tools
-No password or JWT exposure
-No KYC document number exposure
-No database or application secret exposure
-No fabricated account or transaction data
-💬 Persistent Conversation Memory
+🔐 Authentication & Security
 
-The assistant uses JDBC-backed persistent chat memory.
+FinBank implements a stateless authentication architecture.
 
-Conversation IDs are scoped to the authenticated customer:
+Customer authentication
 
-customer-{customerId}-conversation-{conversationId}
+Customer registration
 
-This prevents two different customers from sharing the same conversation-memory namespace.
+Customer login
 
-Conversation context can therefore persist across multiple requests while remaining isolated between customers.
+JWT token generation
 
-🌐 API Overview
-🔑 Authentication
-Method	Endpoint	Access
-POST	/api/auth/login	Public
-👤 Customers
-Method	Endpoint	Access
-POST	/api/customers	Public
-GET	/api/customers/me	CUSTOMER
-GET	/api/customers/{id}	CUSTOMER / ADMIN
-GET	/api/customers	ADMIN
-PUT	/api/customers/{id}	CUSTOMER / ADMIN
-🏦 Accounts
-Method	Endpoint	Access
-POST	/api/customers/{customerId}/accounts	CUSTOMER
-GET	/api/customers/{customerId}/accounts	CUSTOMER
-GET	/api/accounts/{accountNumber}	CUSTOMER
-GET	/api/accounts/my	CUSTOMER
-GET	/api/accounts	ADMIN
-💳 Transactions
-Method	Endpoint	Access
-POST	/api/accounts/{accountNumber}/deposit	CUSTOMER
-POST	/api/accounts/{accountNumber}/withdraw	CUSTOMER
-POST	/api/accounts/{sourceAccountNumber}/transfer	CUSTOMER
-GET	/api/accounts/{accountNumber}/transactions	CUSTOMER
-GET	/api/accounts/transactions/{reference}	CUSTOMER
-Transaction History Query Parameters
-type
-fromDate
-toDate
-minAmount
-maxAmount
-search
-page
-size
-sort
+JWT validation
+
+BCrypt password hashing
+
+Protected API endpoints
+
+Automatic JWT attachment from the frontend
+
+Authorization
+
+The application uses role-based access control:
+
+CUSTOMER
+ADMIN
+
+Protected service methods can enforce roles using Spring Security.
 
 Example:
 
-GET /api/accounts/FIN10000001/transactions?type=TRANSFER&minAmount=1000&maxAmount=10000&search=rent&page=0&size=10
-🤖 AI Assistant
-Method	Endpoint	Access
-POST	/api/assistant/chat	CUSTOMER
+@PreAuthorize("hasRole('CUSTOMER')")
 
-Example request:
+Ownership protection
 
-{
-  "message": "Show me my recent transactions",
-  "conversationId": "personal-finance"
-}
-🪪 KYC Management
+Authentication alone is not treated as sufficient.
 
-KYC functionality is included as part of the backend.
+For customer-owned resources, FinBank verifies:
 
-Customer KYC
-KYC document submission
-Document type and document number
-Customer ownership verification
-KYC lifecycle tracking
+JWT
+ ↓
+Authenticated User
+ ↓
+Current Customer
+ ↓
+Requested Resource
+ ↓
+Ownership Check
+ ↓
+Operation
+
+This prevents a customer from changing an ID or account number in a request to access another customer's financial data.
+
+💳 Banking Operations
+
+Accounts
+
+Customers can:
+
+View their accounts
+
+Open additional accounts
+
+Select account type
+
+View account numbers
+
+View balances
+
+View account status
+
+View account creation information
+
+Supported account types:
+
+SAVINGS
+CURRENT
+
+Supported currency:
+
+INR
+
+💰 Deposits
+
+A deposit:
+
+Validates the authenticated customer
+
+Validates account ownership
+
+Checks account status
+
+Validates the amount
+
+Updates the account balance
+
+Creates a transaction
+
+Generates a unique transaction reference
+
+💸 Withdrawals
+
+A withdrawal:
+
+Validates account ownership
+
+Checks account status
+
+Validates the requested amount
+
+Checks sufficient balance
+
+Updates the account balance
+
+Creates a transaction
+
+Generates a unique transaction reference
+
+🔄 Transfers
+
+FinBank supports transfers between FinBank accounts.
+
+The backend validates:
+
+Source-account ownership
+
+Destination account existence
+
+Source account status
+
+Destination account status
+
+Sufficient balance
+
+Same-account transfer prevention
+
+A successful transfer updates both balances and records the transaction.
+
+Account balance updates are performed inside transactional service operations with pessimistic locking to provide safer concurrent balance updates.
+
+📊 Transaction History
+
+Customers can view transaction activity for their accounts.
+
+Supported filters
+
+Transaction type
+
+Date range
+
+Minimum amount
+
+Maximum amount
+
+Search text
+
+Pagination
+
+Sorting
+
+Search supports:
+
+Transaction reference
+Transaction description
+
+The backend also validates filter combinations such as:
+
+fromDate <= toDate
+minAmount <= maxAmount
+amount >= 0
+
+🪪 KYC
+
+FinBank includes a backend KYC workflow.
+
+Customer capabilities
+
+Submit KYC information
+
+Specify document type
+
+Specify document number
+
+View KYC status
+
+View submission/review information
+
+KYC states
+
 PENDING
 UNDER_REVIEW
 APPROVED
 REJECTED
-Duplicate submission prevention
-Modification prevention after approval
-Rejection reason tracking
-Submission timestamps
-Review timestamps
-Administrative KYC
-Admin-only pending KYC retrieval
-KYC approval
-KYC rejection
-Rejection reason tracking
-Paginated pending-KYC retrieval
-KYC API
-Method	Endpoint	Access
-POST	/api/customers/{customerId}/kyc	CUSTOMER
-GET	/api/customers/{customerId}/kyc	CUSTOMER
-GET	/api/admin/kyc	ADMIN
-PUT	/api/admin/kyc/{customerId}/approve	ADMIN
-PUT	/api/admin/kyc/{customerId}/reject	ADMIN
-🛡️ Security Architecture
 
-FinBank uses stateless JWT authentication with Spring Security.
+Administrative capabilities
 
-                    HTTP Request
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │ JWT Authentication   │
-              │      Filter          │
-              └──────────┬──────────┘
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │  Spring Security    │
-              │ Authentication &    │
-              │   Authorization     │
-              └──────────┬──────────┘
-                         │
-                         ▼
-                  ┌─────────────┐
-                  │ Controller  │
-                  └──────┬──────┘
-                         │
-                         ▼
-                  ┌─────────────┐
-                  │   Service   │
-                  └──────┬──────┘
-                         │
-                         ▼
-                  ┌─────────────┐
-                  │ Repository  │
-                  └──────┬──────┘
-                         │
-                         ▼
-                  ┌─────────────┐
-                  │    MySQL    │
-                  └─────────────┘
+Administrators can:
 
-Customer-owned resources follow an additional ownership check:
+Retrieve pending KYC submissions
 
-Authenticated User
-       │
-       ▼
-Current Customer ID
-       │
-       ▼
-Ownership Verification
-       │
-       ├── Account Ownership
-       │
-       └── Transaction Ownership
+Approve KYC
+
+Reject KYC
+
+Store rejection reasons
+
+Paginate KYC results
+
+🤖 FinBank AI
+
+One of the key features of the project is its AI-powered financial assistant.
+
+The assistant is built using:
+
+React
+   ↓
+Spring Boot REST API
+   ↓
+FinancialAssistantService
+   ↓
+Spring AI ChatClient
+   ↓
+Google Gemini
+
+The AI assistant can answer both general financial questions and customer-specific questions using controlled application tools.
+
+🧰 AI Tool Calling
+
+The model does not receive unrestricted access to the database.
+
+Instead, Spring AI exposes controlled tools such as:
+
+Tool
+
+Purpose
+
+getMyAccounts
+
+Retrieve the authenticated customer's accounts
+
+getMyRecentTransactions
+
+Retrieve recent transactions
+
+getMyAccount
+
+Retrieve a specific owned account
+
+getMyTransaction
+
+Retrieve a specific owned transaction
+
+The tools resolve the authenticated customer from the Spring Security context.
+
+The user does not supply a customer ID to the tools.
+
+Example
+
+User
+ │
+ │ "Show me my recent transactions"
+ ▼
+Gemini
+ │
+ │ Tool call
+ ▼
+getMyRecentTransactions()
+ │
+ │ Current authenticated customer
+ ▼
+TransactionService
+ │
+ ▼
+MySQL
+ │
+ ▼
+Customer-owned transaction data
+ │
+ ▼
+Gemini
+ │
+ ▼
+Natural-language response
+
+This design keeps database access inside the application's security boundary.
+
+🧠 Persistent AI Conversation Memory
+
+FinBank uses Spring AI JDBC chat memory.
+
+Conversation history is stored in MySQL.
+
+The application also scopes the conversation ID to the authenticated customer.
+
+Conceptually:
+
+Client Conversation ID
+        +
+Authenticated Customer ID
+        ↓
+Customer-scoped Conversation ID
+        ↓
+Spring AI JDBC Chat Memory
+        ↓
+MySQL
+
+This prevents two customers from intentionally selecting the same client-side conversation ID and sharing chat memory.
+
+🛡️ AI Security Model
+
+The AI assistant is intentionally read-only.
+
+It can retrieve and explain financial information, but it cannot perform banking mutations.
+
+The assistant cannot:
+
+❌ Deposit money
+
+❌ Withdraw money
+
+❌ Transfer money
+
+❌ Change account balances
+
+❌ Modify transactions
+
+❌ Access another customer's accounts
+
+❌ Access passwords
+
+❌ Access JWT secrets
+
+❌ Access database credentials
+
+❌ Execute arbitrary SQL
+
+It can:
+
+✅ Read the customer's accounts
+
+✅ Read the customer's transactions
+
+✅ Explain banking concepts
+
+✅ Answer financial education questions
+
+✅ Perform supported calculations
+
+✅ Maintain conversation context
+
+🏗️ Architecture
+
+High-level architecture
+
+                    ┌─────────────────────┐
+                    │    React Frontend   │
+                    │  TypeScript + Vite  │
+                    └──────────┬──────────┘
+                               │
+                         REST / JSON
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Spring Boot API   │
+                    │     Controllers     │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │      Services       │
+                    │ Business Logic +    │
+                    │ Security Checks     │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Repositories / JPA  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │       MySQL         │
+                    │ Users / Customers   │
+                    │ Accounts / Txns     │
+                    │ KYC / AI Memory     │
+                    └─────────────────────┘
+
+🔒 Security architecture
+
+HTTP Request
+     │
+     ▼
+JWT Authentication Filter
+     │
+     ▼
+Spring Security
+     │
+     ├── Authentication
+     │
+     └── Authorization
               │
               ▼
-        Business Operation
-🏗️ Project Architecture
+         Controller
+              │
+              ▼
+           Service
+              │
+              ▼
+        Ownership Check
+              │
+              ▼
+          Repository
 
-The application follows a layered architecture:
+🗂️ Project Structure
 
-┌─────────────────────────────────────────┐
-│                Client                   │
-└────────────────────┬────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────┐
-│             Controller Layer            │
-│        REST API / Request Handling      │
-└────────────────────┬────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────┐
-│              Service Layer              │
-│       Business Logic & Validation       │
-└────────────────────┬────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────┐
-│            Repository Layer              │
-│          Data Access / JPA              │
-└────────────────────┬────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────┐
-│                MySQL                    │
-│              Persistence                │
-└─────────────────────────────────────────┘
-
-The AI subsystem operates alongside the standard REST flow:
-
-Customer
-   │
-   ▼
-/api/assistant/chat
-   │
-   ▼
-FinancialAssistantController
-   │
-   ▼
-FinancialAssistantService
-   │
-   ├───────────────► Persistent Chat Memory
-   │
-   ▼
-Spring AI ChatClient
-   │
-   ▼
-Google Gemini
-   │
-   ├── getMyAccounts()
-   ├── getMyRecentTransactions()
-   ├── getMyAccount()
-   └── getMyTransaction()
-            │
-            ▼
-      FinBank Services
-            │
-            ▼
-          MySQL
-📁 Project Structure
-src/
+finbank/
 │
-├── main/
-│   │
-│   ├── java/com/finbank/
+├── src/
+│   ├── main/
+│   │   ├── java/com/finbank/
 │   │   │
 │   │   ├── ai/
 │   │   │   ├── FinancialAssistantConfig.java
@@ -455,278 +552,805 @@ src/
 │   │   │   └── TransactionController.java
 │   │   │
 │   │   ├── dto/
-│   │   │   ├── AccountRequestDto.java
-│   │   │   ├── AccountResponseDto.java
-│   │   │   ├── AssistantChatRequestDto.java
-│   │   │   ├── AssistantChatResponseDto.java
-│   │   │   ├── CustomerRequestDto.java
-│   │   │   ├── CustomerResponseDto.java
-│   │   │   ├── CustomerUpdateRequestDto.java
-│   │   │   ├── DepositRequestDto.java
-│   │   │   ├── KycRequestDto.java
-│   │   │   ├── KycResponseDto.java
-│   │   │   ├── LoginRequestDto.java
-│   │   │   ├── LoginResponseDto.java
-│   │   │   ├── TransactionFilterDto.java
-│   │   │   ├── TransactionResponseDto.java
-│   │   │   ├── TransferRequestDto.java
-│   │   │   └── WithdrawalRequestDto.java
-│   │   │
 │   │   ├── entity/
-│   │   │   ├── Account.java
-│   │   │   ├── Customer.java
-│   │   │   ├── Transaction.java
-│   │   │   ├── User.java
-│   │   │   └── enums/
-│   │   │
 │   │   ├── exception/
-│   │   │   ├── ErrorResponse.java
-│   │   │   ├── GlobalExceptionHandler.java
-│   │   │   └── Application Exceptions
-│   │   │
 │   │   ├── repository/
-│   │   │   ├── AccountRepository.java
-│   │   │   ├── CustomerRepository.java
-│   │   │   ├── TransactionRepository.java
-│   │   │   └── UserRepository.java
-│   │   │
 │   │   ├── security/
-│   │   │   └── JwtAuthenticationFilter.java
-│   │   │
 │   │   └── service/
-│   │       ├── AccountService.java
-│   │       ├── AuthService.java
-│   │       ├── CurrentUserService.java
-│   │       ├── CustomUserDetailsService.java
-│   │       ├── CustomerService.java
-│   │       ├── FinancialAssistantService.java
-│   │       ├── JwtService.java
-│   │       ├── KycService.java
-│   │       └── TransactionService.java
 │   │
-│   └── resources/
-│       ├── application.properties
-│       └── application-local.properties
+│   ├── resources/
+│   │   ├── application.properties
+│   │   └── application-local.properties
+│   │
+│   └── test/
 │
-└── test/
-    │
-    └── java/com/finbank/
-        │
-        ├── ai/
-        │   ├── FinancialAssistantConversationSecurityTest.java
-        │   ├── FinancialAssistantIntegrationTest.java
-        │   ├── FinancialAssistantMemoryIntegrationTest.java
-        │   ├── FinancialAssistantSecurityTest.java
-        │   ├── FinancialAssistantToolsTest.java
-        │   └── GeminiConnectionTest.java
-        │
-        ├── controller/
-        │   └── FinancialAssistantControllerIntegrationTest.java
-        │
-        └── service/
-            ├── AccountServiceTest.java
-            ├── AuthServiceTest.java
-            ├── CurrentUserServiceTest.java
-            ├── CustomUserDetailsServiceTest.java
-            ├── CustomerServiceTest.java
-            ├── JwtServiceTest.java
-            └── TransactionServiceTest.java
-🧪 Testing
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── types/
+│   │   ├── App.tsx
+│   │   ├── App.css
+│   │   └── index.css
+│   │
+│   ├── public/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.ts
+│
+├── pom.xml
+├── mvnw
+├── mvnw.cmd
+├── .gitignore
+└── README.md
 
-The project includes automated tests covering the core banking system, security layer, and AI subsystem.
+🖥️ Frontend
 
-Service Tests
+The frontend is a React single-page application.
 
-Test coverage includes:
+Main routes
+
+Route
+
+Description
+
+/login
+
+Customer login
+
+/register
+
+Customer registration
+
+/dashboard
+
+Banking overview
+
+/accounts
+
+Account management
+
+/transactions
+
+Transaction history
+
+/money
+
+Deposit / withdrawal
+
+/transfer
+
+Account transfers
+
+/profile
+
+Customer profile
+
+/assistant
+
+AI financial assistant
+
+The application uses:
+
+React 19
+
+TypeScript
+
+Vite
+
+Axios
+
+React Router
+
+Lucide React
+
+The frontend communicates with the backend through /api routes.
+
+During development, Vite proxies those requests to the Spring Boot server.
+
+🔌 REST API
+
+All endpoints are prefixed with:
+
+/api
 
 Authentication
-JWT generation and validation
-Current-user resolution
-User details loading
-Customer management
-Account management
-Deposits
-Withdrawals
-Transfers
-Balance validation
-Account ownership
-Transaction ownership
-Transaction filtering validation
-Security Tests
 
-Security tests cover:
+Method
 
-Authentication requirements
-Role-based authorization
-Customer ownership enforcement
-Account isolation
-Transaction isolation
-AI tool isolation
-Customer-scoped conversations
-Cross-customer conversation protection
-AI Tests
+Endpoint
 
-AI-related tests cover:
+Access
 
-Account retrieval
-Recent transaction retrieval
-Individual account retrieval
-Transaction lookup
-Tool parameter limits
-Tool security
-Customer isolation
-General financial questions
-Conversation memory
-Conversation ID handling
-AI controller validation
-Customer-only assistant access
-Gemini connectivity
-Integration Tests
+POST
 
-Spring Boot integration tests verify:
+/api/auth/login
 
-Application context loading
-AI integration
-Controller integration
-Security integration
-Persistent conversation memory
+Public
 
-All current automated tests pass successfully.
+Customers
 
-⚙️ Getting Started
+Method
+
+Endpoint
+
+Access
+
+POST
+
+/api/customers
+
+Public
+
+GET
+
+/api/customers/me
+
+CUSTOMER
+
+GET
+
+/api/customers/{id}
+
+CUSTOMER / ADMIN
+
+GET
+
+/api/customers
+
+ADMIN
+
+PUT
+
+/api/customers/{id}
+
+CUSTOMER / ADMIN
+
+Accounts
+
+Method
+
+Endpoint
+
+Access
+
+POST
+
+/api/customers/{customerId}/accounts
+
+CUSTOMER
+
+GET
+
+/api/customers/{customerId}/accounts
+
+CUSTOMER
+
+GET
+
+/api/accounts/my
+
+CUSTOMER
+
+GET
+
+/api/accounts/{accountNumber}
+
+CUSTOMER
+
+GET
+
+/api/accounts
+
+ADMIN
+
+Transactions
+
+Method
+
+Endpoint
+
+Access
+
+POST
+
+/api/accounts/{accountNumber}/deposit
+
+CUSTOMER
+
+POST
+
+/api/accounts/{accountNumber}/withdraw
+
+CUSTOMER
+
+POST
+
+/api/accounts/{sourceAccountNumber}/transfer
+
+CUSTOMER
+
+GET
+
+/api/accounts/{accountNumber}/transactions
+
+CUSTOMER
+
+GET
+
+/api/accounts/transactions/{reference}
+
+CUSTOMER
+
+KYC
+
+Method
+
+Endpoint
+
+Access
+
+POST
+
+/api/customers/{customerId}/kyc
+
+CUSTOMER
+
+GET
+
+/api/customers/{customerId}/kyc
+
+CUSTOMER
+
+GET
+
+/api/admin/kyc
+
+ADMIN
+
+PUT
+
+/api/admin/kyc/{customerId}/approve
+
+ADMIN
+
+PUT
+
+/api/admin/kyc/{customerId}/reject
+
+ADMIN
+
+AI Assistant
+
+Method
+
+Endpoint
+
+Access
+
+POST
+
+/api/assistant/chat
+
+CUSTOMER
+
+Example:
+
+{
+  "message": "What are my recent transactions?",
+  "conversationId": "personal-finance"
+}
+
+🗄️ Database
+
+FinBank uses MySQL as its relational database.
+
+The database stores:
+
+┌─────────────────────┐
+│ users               │
+├─────────────────────┤
+│ customers           │
+├─────────────────────┤
+│ account             │
+├─────────────────────┤
+│ transaction         │
+├─────────────────────┤
+│ spring_ai_chat_memory│
+└─────────────────────┘
+
+The exact schema is generated/managed by the application's JPA and Spring AI configuration for the current development setup.
+
+Create the database with:
+
+CREATE DATABASE finbank;
+
+⚙️ Local Setup
+
 Prerequisites
 
 Make sure the following are installed:
 
-Java 17+
-Maven
-MySQL 8+
-Google Gemini API Key
-IntelliJ IDEA or another Java IDE
-🗄️ Database Setup
+Java 21
 
-Create the FinBank database:
+Node.js + npm
+
+MySQL 8+
+
+Maven (optional — Maven Wrapper is included)
+
+Google Gemini API key
+
+Git
+
+1. Clone the repository
+
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd finbank
+
+2. Create the MySQL database
 
 CREATE DATABASE finbank;
-🔧 Configuration
 
-The application uses environment-specific configuration.
+3. Configure local properties
 
-Required environment variables:
+Create:
 
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-JWT_SECRET
-GOOGLE_API_KEY
+src/main/resources/application-local.properties
 
-Example:
+Configure your local environment values:
 
 DB_URL=jdbc:mysql://localhost:3306/finbank
 DB_USERNAME=YOUR_USERNAME
 DB_PASSWORD=YOUR_PASSWORD
 
-JWT_SECRET=YOUR_JWT_SECRET
+JWT_SECRET=YOUR_LONG_RANDOM_SECRET
 
-GOOGLE_API_KEY=YOUR_GOOGLE_GEMINI_API_KEY
-⚠️ Never commit secrets
+GOOGLE_API_KEY=YOUR_GEMINI_API_KEY
 
-Do not commit:
+Never commit application-local.properties to GitHub.
 
-application-local.properties
+▶️ Running the Backend
 
-or any file containing:
+From the project root:
+
+Windows
+
+.\mvnw.cmd spring-boot:run
+
+Linux / macOS
+
+./mvnw spring-boot:run
+
+Backend:
+
+http://localhost:8080
+
+▶️ Running the Frontend
+
+Open another terminal:
+
+cd frontend
+npm install
+npm run dev
+
+Frontend:
+
+http://localhost:5173
+
+🔑 Authentication Flow
+
+┌──────────┐
+│ Register │
+└────┬─────┘
+     │
+     ▼
+POST /api/customers
+     │
+     ▼
+User + Customer
+     │
+     ▼
+┌─────────┐
+│  Login  │
+└────┬────┘
+     │
+     ▼
+POST /api/auth/login
+     │
+     ▼
+JWT Token
+     │
+     ▼
+Frontend stores token
+     │
+     ▼
+Authorization: Bearer <JWT>
+     │
+     ▼
+Protected APIs
+
+🧪 Testing
+
+Run the complete test suite with:
+
+Windows
+
+.\mvnw.cmd test
+
+Linux / macOS
+
+./mvnw test
+
+The project includes testing around:
+
+Service layer
+
+Authentication
+
+JWT processing
+
+Current-user resolution
+
+Customer management
+
+Account management
+
+Deposits
+
+Withdrawals
+
+Transfers
+
+Balance validation
+
+Ownership validation
+
+Transaction filtering
+
+Security
+
+Authentication requirements
+
+Role authorization
+
+Customer ownership
+
+Account isolation
+
+Transaction isolation
+
+AI tool isolation
+
+Customer-scoped conversation IDs
+
+AI
+
+Financial tools
+
+Tool security
+
+Customer isolation
+
+Conversation memory
+
+Gemini connectivity
+
+AI controller validation
+
+General financial questions
+
+Integration
+
+Spring application context
+
+Controller integration
+
+AI integration
+
+🧯 Error Handling
+
+FinBank uses centralized exception handling through:
+
+GlobalExceptionHandler
+
+The application provides structured handling for common failures including:
+
+Invalid credentials
+
+Customer not found
+
+Account not found
+
+Inactive account
+
+Insufficient balance
+
+Same-account transfer
+
+Transaction not found
+
+Duplicate email
+
+Invalid transaction filters
+
+Validation errors
+
+Authentication failures
+
+Authorization failures
+
+AI/API failures
+
+Request validation is handled using Jakarta Bean Validation.
+
+🔐 Security Considerations
+
+The project intentionally keeps secrets outside source control.
+
+Never commit:
 
 Database passwords
 JWT secrets
 Gemini API keys
-Other credentials
-▶️ Running the Application
-Linux / macOS
-./mvnw spring-boot:run
-Windows
-.\mvnw.cmd spring-boot:run
+Production credentials
+Private connection strings
+.env files containing secrets
 
-The application starts on:
+Before publishing to GitHub, verify:
 
-http://localhost:8080
-🔑 Example Authentication Flow
-1. Register
-POST /api/customers
-Content-Type: application/json
-{
-  "firstName": "Aniket",
-  "lastName": "Singh",
-  "email": "aniket@example.com",
-  "phone": "9876543210",
-  "dateOfBirth": "2000-01-01",
-  "password": "password123"
-}
-2. Login
-POST /api/auth/login
-Content-Type: application/json
-{
-  "email": "aniket@example.com",
-  "password": "password123"
-}
+git status
 
-The response contains a JWT token.
+and:
 
-3. Access Protected APIs
+git ls-files src/main/resources/application-local.properties
 
-Include the token in every protected request:
+The second command should return nothing.
 
-Authorization: Bearer <JWT_TOKEN>
-💰 Example Transaction
-Deposit
-POST /api/accounts/{accountNumber}/deposit
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
-{
-  "amount": 500.00,
-  "description": "Cash deposit"
-}
-Withdrawal
-POST /api/accounts/{accountNumber}/withdraw
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
-Transfer
-POST /api/accounts/{sourceAccountNumber}/transfer
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
-{
-  "destinationAccountNumber": "FIN10000002",
-  "amount": 1000.00,
-  "description": "Account transfer"
-}
-🤖 Example AI Request
-POST /api/assistant/chat
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
-{
-  "message": "Show me my recent transactions",
-  "conversationId": "personal-finance"
-}
+If credentials were previously exposed
 
-The assistant retrieves the customer's financial information through secured backend tools.
+Rotate:
 
-🧱 Design Principles
+MySQL password
 
-FinBank emphasizes:
+JWT secret
 
-Separation of concerns
-Layered architecture
-DTO-based API contracts
-Repository abstraction
-Service-level business logic
-Secure authentication
-Role-based authorization
-Customer data isolation
-Transactional financial operations
-Pessimistic locking
-Input validation
-Centralized exception handling
-Read-only AI tools
+Gemini API key
+
+before making the repository public.
+
+🐳 Deployment Roadmap
+
+The application is structured for containerization.
+
+A production deployment can be organized as:
+
+                    Internet
+                       │
+                       ▼
+                ┌──────────────┐
+                │   Frontend   │
+                │ React / Vite │
+                └──────┬───────┘
+                       │
+                       ▼
+                ┌──────────────┐
+                │ Spring Boot  │
+                │ REST API     │
+                └──────┬───────┘
+                       │
+              ┌────────┴─────────┐
+              │                  │
+              ▼                  ▼
+        ┌───────────┐      ┌─────────────┐
+        │   MySQL   │      │ Gemini API  │
+        └───────────┘      └─────────────┘
+
+For deployment, environment variables should be supplied by the hosting platform rather than committed to the repository.
+
+The current Vite proxy:
+
+/api → http://localhost:8080
+
+is intended for local development and should be replaced with the appropriate production architecture when deploying.
+
+📈 Future Improvements
+
+Potential next steps include:
+
+Dockerfile for backend
+
+Dockerfile for frontend
+
+Docker Compose for local full-stack setup
+
+Free cloud deployment
+
+Production MySQL
+
+Flyway/Liquibase migrations
+
+CI/CD with GitHub Actions
+
+OpenAPI / Swagger documentation
+
+Dedicated admin dashboard
+
+Customer-facing KYC UI
+
+PDF bank statements
+
+Transaction analytics
+
+Email/SMS notifications
+
+Refresh-token authentication
+
+Audit logging
+
+API rate limiting
+
+Production monitoring
+
+Enhanced AI conversation history
+
+🧭 Project Workflow
+
+The complete customer journey can be summarized as:
+
+             ┌──────────────┐
+             │   Register   │
+             └──────┬───────┘
+                    ▼
+             ┌──────────────┐
+             │    Login     │
+             └──────┬───────┘
+                    ▼
+             ┌──────────────┐
+             │  Dashboard   │
+             └──────┬───────┘
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+   Accounts     Transactions   Profile
+       │            │
+       ▼            ▼
+    Deposit      Filters
+    Withdraw
+    Transfer
+       │
+       └────────────┐
+                    ▼
+             ┌──────────────┐
+             │ FinBank AI   │
+             └──────┬───────┘
+                    ▼
+             Google Gemini
+                    │
+                    ▼
+             Customer-scoped
+             financial data
+
+📌 Current Status
+
+Module
+
+Status
+
+Customer registration
+
+✅
+
+Login / JWT
+
+✅
+
+Protected routes
+
+✅
+
+Customer profile
+
+✅
+
+Account management
+
+✅
+
+Deposits
+
+✅
+
+Withdrawals
+
+✅
+
+Transfers
+
+✅
+
+Transaction history
+
+✅
+
+Transaction filtering
+
+✅
+
+KYC backend
+
+✅
+
+AI assistant
+
+✅
+
+Gemini integration
+
+✅
+
+AI tool calling
+
+✅
+
 Customer-scoped AI memory
-Automated testing
-Maintainable and extensible code
+
+✅
+
+MySQL persistence
+
+✅
+
+Automated tests
+
+✅
+
+Docker deployment
+
+🚧 Next step
+
+👨‍💻 Development Philosophy
+
+FinBank follows a few important design principles:
+
+1. Security first
+
+Customer identity comes from the authenticated security context rather than trusting client-provided IDs.
+
+2. Business logic belongs in services
+
+Controllers handle HTTP concerns while services handle banking rules and ownership validation.
+
+3. Financial operations are transactional
+
+Balance updates and transaction creation are treated as a single business operation.
+
+4. AI is constrained
+
+The AI assistant does not receive unrestricted database access.
+
+5. The frontend is not trusted
+
+All important validation and authorization rules are enforced on the backend.
+
+6. Secrets stay outside source control
+
+Local and production credentials belong in environment-specific configuration.
+
+📜 License
+
+No open-source license has currently been specified for this project.
+
+If you plan to distribute or reuse FinBank as an open-source project, add an appropriate license such as MIT.
+
+<div align="center">
+
+🏦 FinBank
+
+A secure full-stack banking application with an AI-powered financial assistant.
+
+Built with ❤️ using Spring Boot + React + MySQL + Spring AI
+
+</div>
