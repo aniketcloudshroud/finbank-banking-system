@@ -14,7 +14,7 @@ import com.finbank.exception.TransactionNotFoundException;
 import com.finbank.repository.AccountRepository;
 import com.finbank.repository.TransactionRepository;
 import jakarta.persistence.criteria.*;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,15 +49,31 @@ public class TransactionService {
             String accountNumber,
             DepositRequestDto request
     ) {
+        if (request.getAmount() == null ||
+                request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+
+            throw new IllegalArgumentException(
+                    "Deposit amount must be greater than zero"
+            );
+        }
+
 
         Long customerId =
                 currentUserService.getCurrentCustomerId();
 
         Account account =
-                getCustomerAccount(
-                        accountNumber,
-                        customerId
-                );
+                accountRepository
+                        .findByAccountNumberAndCustomerIdForUpdate(
+                                accountNumber,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new AccountNotFoundException(
+                                        "Account number " +
+                                                accountNumber +
+                                                " not found"
+                                )
+                        );
 
         validateActiveAccount(account);
 
@@ -114,10 +130,18 @@ public class TransactionService {
                 currentUserService.getCurrentCustomerId();
 
         Account account =
-                getCustomerAccount(
-                        accountNumber,
-                        customerId
-                );
+                accountRepository
+                        .findByAccountNumberAndCustomerIdForUpdate(
+                                accountNumber,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new AccountNotFoundException(
+                                        "Account number " +
+                                                accountNumber +
+                                                " not found"
+                                )
+                        );
 
         validateActiveAccount(account);
 
@@ -188,10 +212,18 @@ public class TransactionService {
                 currentUserService.getCurrentCustomerId();
 
         Account sourceAccount =
-                getCustomerAccount(
-                        sourceAccountNumber,
-                        customerId
-                );
+                accountRepository
+                        .findByAccountNumberAndCustomerIdForUpdate(
+                                sourceAccountNumber,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new AccountNotFoundException(
+                                        "Account number " +
+                                                sourceAccountNumber +
+                                                " not found"
+                                )
+                        );
 
         Account destinationAccount =
                 accountRepository
@@ -267,7 +299,7 @@ public class TransactionService {
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TransactionResponseDto getTransactionByReference(
             String reference
     ) {
@@ -315,21 +347,31 @@ public class TransactionService {
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<TransactionResponseDto> getAccountTransactions(
             String accountNumber,
             TransactionFilterDto filter,
             Pageable pageable
     ) {
 
+        validateTransactionFilter(filter);
+
         Long customerId =
                 currentUserService.getCurrentCustomerId();
 
         Account account =
-                getCustomerAccount(
-                        accountNumber,
-                        customerId
-                );
+                accountRepository
+                        .findByAccountNumberAndCustomerIdForUpdate(
+                                accountNumber,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new AccountNotFoundException(
+                                        "Account number " +
+                                                accountNumber +
+                                                " not found"
+                                )
+                        );
 
         var specification =
                 (org.springframework.data.jpa.domain.Specification<Transaction>)
@@ -528,5 +570,50 @@ public class TransactionService {
         );
 
         return reference;
+    }
+
+    private void validateTransactionFilter(
+            TransactionFilterDto filter
+    ) {
+
+        if (filter == null) {
+            return;
+        }
+
+        if (filter.getFromDate() != null &&
+                filter.getToDate() != null &&
+                filter.getFromDate()
+                        .isAfter(filter.getToDate())) {
+
+            throw new IllegalArgumentException(
+                    "From date cannot be after to date"
+            );
+        }
+
+        if (filter.getMinAmount() != null &&
+                filter.getMaxAmount() != null &&
+                filter.getMinAmount()
+                        .compareTo(filter.getMaxAmount()) > 0) {
+
+            throw new IllegalArgumentException(
+                    "Minimum amount cannot be greater than maximum amount"
+            );
+        }
+
+        if (filter.getMinAmount() != null &&
+                filter.getMinAmount().signum() < 0) {
+
+            throw new IllegalArgumentException(
+                    "Minimum amount cannot be negative"
+            );
+        }
+
+        if (filter.getMaxAmount() != null &&
+                filter.getMaxAmount().signum() < 0) {
+
+            throw new IllegalArgumentException(
+                    "Maximum amount cannot be negative"
+            );
+        }
     }
 }

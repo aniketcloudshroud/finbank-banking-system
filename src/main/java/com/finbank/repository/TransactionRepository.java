@@ -1,6 +1,8 @@
 package com.finbank.repository;
 
 import com.finbank.entity.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -16,5 +18,11 @@ public interface TransactionRepository
 
     Optional<Transaction> findByReference(
             String reference
+    );
+
+    Page<Transaction> findBySourceAccountCustomerIdOrDestinationAccountCustomerId(
+            Long sourceCustomerId,
+            Long destinationCustomerId,
+            Pageable pageable
     );
 }
