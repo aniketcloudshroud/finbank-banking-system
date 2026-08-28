@@ -1,18 +1,21 @@
 package com.finbank.service;
 
-import com.finbank.dto.*;
-import com.finbank.entity.*;
-import com.finbank.exception.*;
-import com.finbank.repository.*;
+import com.finbank.dto.CustomerRequestDto;
+import com.finbank.dto.CustomerResponseDto;
+import com.finbank.dto.CustomerUpdateRequestDto;
+import com.finbank.entity.Customer;
+import com.finbank.entity.KycStatus;
+import com.finbank.entity.Role;
+import com.finbank.entity.User;
+import com.finbank.exception.CustomerNotFoundException;
+import com.finbank.exception.EmailAlreadyExistsException;
+import com.finbank.repository.CustomerRepository;
+import com.finbank.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class CustomerService {
@@ -20,40 +23,64 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CurrentUserService currentUserService;
 
-    public CustomerService(CustomerRepository customerRepository,
-                           UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
-
+    public CustomerService(
+            CustomerRepository customerRepository,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            CurrentUserService currentUserService
+    ) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.currentUserService = currentUserService;
     }
 
     @Transactional
-    public CustomerResponseDto createCustomer(CustomerRequestDto request) {
+    public CustomerResponseDto createCustomer(
+            CustomerRequestDto request
+    ) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String email = request.getEmail()
+                .trim()
+                .toLowerCase();
+
+        if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(
-                    "Email " + request.getEmail() + " is already registered"
+                    "Email " + email + " is already registered"
+            );
+        }
+
+        if (customerRepository.existsByEmail(email)) {
+            throw new EmailAlreadyExistsException(
+                    "Email " + email + " is already registered"
             );
         }
 
         Customer customer = new Customer();
 
-        customer.setFirstName(request.getFirstName());
-        customer.setLastName(request.getLastName());
-        customer.setEmail(request.getEmail());
-        customer.setPhone(request.getPhone());
+        customer.setFirstName(request.getFirstName().trim());
+        customer.setLastName(request.getLastName().trim());
+        customer.setEmail(email);
+        customer.setPhone(request.getPhone().trim());
         customer.setDateOfBirth(request.getDateOfBirth());
+
+        /*
+         * KYC is currently kept as an existing field in your
+         * entity, but KYC functionality is not part of Phase 1.
+         */
         customer.setKycStatus(KycStatus.PENDING);
 
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer savedCustomer =
+                customerRepository.save(customer);
 
         User user = new User();
 
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(email);
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
+        );
         user.setRole(Role.CUSTOMER);
         user.setCustomer(savedCustomer);
 
@@ -62,99 +89,81 @@ public class CustomerService {
         return new CustomerResponseDto(savedCustomer);
     }
 
+    @Transactional
+    public CustomerResponseDto getCurrentCustomer() {
 
-    public CustomerResponseDto getCustomerById(Long id) {
-
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() ->
-                        new CustomerNotFoundException(
-                                "Customer with id " + id + " not found"
-                        )
-                );
+        Customer customer =
+                currentUserService.getCurrentCustomer();
 
         return new CustomerResponseDto(customer);
     }
 
+    @Transactional
+    public CustomerResponseDto getCustomerById(Long id) {
 
-    public List<CustomerResponseDto> getAllCustomers() {
+        Customer customer =
+                customerRepository.findById(id)
+                        .orElseThrow(() ->
+                                new CustomerNotFoundException(
+                                        "Customer with id " +
+                                                id +
+                                                " not found"
+                                )
+                        );
 
-        return customerRepository.findAll()
-                .stream()
-                .map(CustomerResponseDto::new)
-                .toList();
+        return new CustomerResponseDto(customer);
     }
 
+    public Page<CustomerResponseDto> getAllCustomers(
+            Pageable pageable
+    ) {
 
-    public Page<CustomerResponseDto> getAllCustomers(Pageable pageable) {
-
-        return customerRepository.findAll(pageable)
+        return customerRepository
+                .findAll(pageable)
                 .map(CustomerResponseDto::new);
     }
 
-
+    @Transactional
     public CustomerResponseDto updateCustomer(
             Long id,
-            CustomerUpdateRequestDto requestDto) {
+            CustomerUpdateRequestDto requestDto
+    ) {
 
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() ->
-                        new CustomerNotFoundException(
-                                "Customer with id " + id + " not found"
-                        )
-                );
+        Customer customer =
+                customerRepository.findById(id)
+                        .orElseThrow(() ->
+                                new CustomerNotFoundException(
+                                        "Customer with id " +
+                                                id +
+                                                " not found"
+                                )
+                        );
 
-        customer.setFirstName(requestDto.getFirstName());
-        customer.setLastName(requestDto.getLastName());
-        customer.setPhone(requestDto.getPhone());
-        customer.setDateOfBirth(requestDto.getDateOfBirth());
+        customer.setFirstName(
+                requestDto.getFirstName().trim()
+        );
 
-        Customer savedCustomer = customerRepository.save(customer);
+        customer.setLastName(
+                requestDto.getLastName().trim()
+        );
 
-        return new CustomerResponseDto(savedCustomer);
-    }
+        customer.setPhone(
+                requestDto.getPhone().trim()
+        );
 
+        customer.setDateOfBirth(
+                requestDto.getDateOfBirth()
+        );
 
-    public CustomerResponseDto updateKycStatus(
-            Long customerId,
-            KycStatus status) {
-
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() ->
-                        new CustomerNotFoundException(
-                                "Customer with id " + customerId + " not found"
-                        )
-                );
-
-        customer.setKycStatus(status);
-
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer savedCustomer =
+                customerRepository.save(customer);
 
         return new CustomerResponseDto(savedCustomer);
     }
-
-
-    private Long getAuthenticatedCustomerId() {
-
-        Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                "User with email " + email + " not found"
-                        )
-                );
-
-        return user.getCustomer().getId();
-    }
-
 
     public boolean isCurrentCustomer(Long customerId) {
-
-        return getAuthenticatedCustomerId().equals(customerId);
+        return currentUserService
+                .getCurrentCustomerId()
+                .equals(customerId);
     }
 }

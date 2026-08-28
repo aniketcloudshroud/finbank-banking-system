@@ -1,147 +1,192 @@
 package com.finbank.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import org.springframework.http.*;
-import org.springframework.web.bind.*;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(
-            InvalidCredentialsException ex) {
+            InvalidCredentialsException ex
+    ) {
 
-        ErrorResponse errorResponse = new ErrorResponse();
-
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        errorResponse.setMessage(ex.getMessage());
-
-        return new ResponseEntity<>(
-                errorResponse,
-                HttpStatus.UNAUTHORIZED
+        return build(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage()
         );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
-            MethodArgumentNotValidException ex) {
+            MethodArgumentNotValidException ex
+    ) {
 
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> errors =
+                new LinkedHashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
+        for (FieldError error :
+                ex.getBindingResult().getFieldErrors()) {
+
+            errors.put(
+                    error.getField(),
+                    error.getDefaultMessage()
+            );
+        }
+
+        ErrorResponse response =
+                new ErrorResponse();
+
+        response.setTimestamp(
+                LocalDateTime.now()
         );
 
-        ErrorResponse errorResponse = new ErrorResponse();
+        response.setStatus(
+                HttpStatus.BAD_REQUEST.value()
+        );
 
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(400);
-        errorResponse.setMessage("Validation failed");
-        errorResponse.setErrors(errors);
+        response.setMessage(
+                "Validation failed"
+        );
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        response.setErrors(errors);
+
+        return ResponseEntity
+                .badRequest()
+                .body(response);
     }
 
     @ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCustomerNotFound(
-            CustomerNotFoundException ex) {
+            CustomerNotFoundException ex
+    ) {
 
-        ErrorResponse errorResponse = new ErrorResponse();
-
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(404);
-        errorResponse.setMessage(ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(errorResponse);
+        return build(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
     }
 
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAccountNotFound(
-            AccountNotFoundException ex) {
+            AccountNotFoundException ex
+    ) {
 
-        ErrorResponse response = new ErrorResponse();
+        return build(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
+    }
 
-        response.setTimestamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.NOT_FOUND.value());
-        response.setMessage(ex.getMessage());
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTransactionNotFound(
+            TransactionNotFoundException ex
+    ) {
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return build(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
     }
 
     @ExceptionHandler(AccountNotActiveException.class)
     public ResponseEntity<ErrorResponse> handleAccountNotActive(
-            AccountNotActiveException ex) {
+            AccountNotActiveException ex
+    ) {
 
-        ErrorResponse response = new ErrorResponse();
-
-        response.setTimestamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setMessage(ex.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return build(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage()
+        );
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientBalance(
-            InsufficientBalanceException ex) {
+            InsufficientBalanceException ex
+    ) {
 
-        ErrorResponse response = new ErrorResponse();
-
-        response.setTimestamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setMessage(ex.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return build(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage()
+        );
     }
 
     @ExceptionHandler(SameAccountTransferException.class)
-    public ResponseEntity<ErrorResponse> sameAccountProvided(
-            SameAccountTransferException ex) {
+    public ResponseEntity<ErrorResponse> handleSameAccountTransfer(
+            SameAccountTransferException ex
+    ) {
 
-        ErrorResponse response = new ErrorResponse();
-
-        response.setTimestamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setMessage(ex.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-
-    @ExceptionHandler(TransactionNotFoundException.class)
-    public ResponseEntity<ErrorResponse> transactionNotFound(
-            TransactionNotFoundException ex) {
-
-        ErrorResponse response = new ErrorResponse();
-
-        response.setTimestamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.NOT_FOUND.value());
-        response.setMessage(ex.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return build(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage()
+        );
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
-            EmailAlreadyExistsException ex) {
+            EmailAlreadyExistsException ex
+    ) {
 
-        ErrorResponse errorResponse = new ErrorResponse();
-
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(HttpStatus.CONFLICT.value());
-        errorResponse.setMessage(ex.getMessage());
-
-        return new ResponseEntity<>(
-                errorResponse,
-                HttpStatus.CONFLICT
+        return build(
+                HttpStatus.CONFLICT,
+                ex.getMessage()
         );
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex
+    ) {
 
+        return build(
+                HttpStatus.FORBIDDEN,
+                "You do not have permission to perform this operation"
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(
+            Exception ex
+    ) {
+
+        /*
+         * Do not expose internal exception details to clients.
+         */
+        return build(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpected error occurred"
+        );
+    }
+
+    private ResponseEntity<ErrorResponse> build(
+            HttpStatus status,
+            String message
+    ) {
+
+        ErrorResponse response =
+                new ErrorResponse();
+
+        response.setTimestamp(
+                LocalDateTime.now()
+        );
+
+        response.setStatus(
+                status.value()
+        );
+
+        response.setMessage(message);
+
+        return ResponseEntity
+                .status(status)
+                .body(response);
+    }
 }

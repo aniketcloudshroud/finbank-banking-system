@@ -1,7 +1,9 @@
 package com.finbank.service;
 
+import com.finbank.entity.Customer;
 import com.finbank.entity.User;
 import com.finbank.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,24 +21,49 @@ public class CurrentUserService {
     public User getCurrentUser() {
 
         Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication.getPrincipal().equals("anonymousUser")) {
+
+            throw new AuthenticationCredentialsNotFoundException(
+                    "Authentication is required"
+            );
+        }
 
         String email = authentication.getName();
 
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
-                                "User with email " + email + " not found"
+                                "Authenticated user not found"
                         )
                 );
     }
 
-    public Long getCurrentCustomerId() {
+    public Customer getCurrentCustomer() {
 
-        return getCurrentUser()
-                .getCustomer()
-                .getId();
+        User user = getCurrentUser();
+
+        if (user.getCustomer() == null) {
+            throw new IllegalStateException(
+                    "Authenticated user is not associated with a customer"
+            );
+        }
+
+        return user.getCustomer();
+    }
+
+    public Long getCurrentCustomerId() {
+        return getCurrentCustomer().getId();
+    }
+
+    public String getCurrentUserEmail() {
+        return getCurrentUser().getEmail();
+    }
+
+    public boolean isCurrentCustomer(Long customerId) {
+        return getCurrentCustomerId().equals(customerId);
     }
 }

@@ -1,23 +1,20 @@
 package com.finbank.repository;
 
-import com.finbank.entity.*;
-import org.springframework.boot.autoconfigure.data.*;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.*;
-import org.springframework.stereotype.*;
+import com.finbank.entity.Transaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Optional;
 
 @Repository
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+public interface TransactionRepository
+        extends JpaRepository<Transaction, Long>,
+        JpaSpecificationExecutor<Transaction> {
 
     boolean existsByReference(String reference);
 
-    Page<Transaction> findBySourceAccountAccountNumberOrDestinationAccountAccountNumber(
-            String sourceAccountNumber,
-            String destinationAccountNumber,
-            Pageable pageable
+    Optional<Transaction> findByReference(
+            String reference
     );
-
-    Optional<Transaction> findByReference(String reference);
 }

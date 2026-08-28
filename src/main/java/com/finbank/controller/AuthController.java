@@ -1,8 +1,9 @@
 package com.finbank.controller;
 
-import com.finbank.dto.*;
-import com.finbank.service.*;
-import jakarta.validation.*;
+import com.finbank.dto.LoginRequestDto;
+import com.finbank.dto.LoginResponseDto;
+import com.finbank.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,7 +12,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(
+            AuthService authService
+    ) {
         this.authService = authService;
     }
 
